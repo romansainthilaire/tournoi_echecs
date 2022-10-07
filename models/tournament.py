@@ -36,6 +36,9 @@ class Tournament():
         self.players = players
         self.rounds = rounds
 
+    def __str__(self):
+        return f"{self.name} - {self.date.strftime('%d/%m/%Y')}"
+
     @property
     def serialized(self):
         return {
