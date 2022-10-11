@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from tinydb import TinyDB
+from tinydb import TinyDB, where
 
 from models.player import Player
 
@@ -9,32 +9,44 @@ db = TinyDB(Path(__file__).parent.parent / "db.json", indent=4)
 matches_table = db.table("matches")
 
 
-class Match(tuple):
+class Match():
 
-    def __new__(
-        cls,
+    def __init__(
+        self,
         player_1: Player,
-        score_1: int,
         player_2: Player,
-        score_2: int
+        score_1: float = 0,
+        score_2: float = 0
     ):
-        return tuple.__new__(Match, ([player_1, score_1], [player_2, score_2]))
+        self.id = -1
+        self.player_1 = player_1
+        self.player_2 = player_2
+        self.score_1 = score_1
+        self.score_2 = score_2
 
     def __str__(self):
         return (
-            f"{self[0][0].first_name} {self[0][0].last_name} : {self[0][1]}"
-            + "\n"
-            f"{self[1][0].first_name} {self[1][0].last_name} : {self[1][1]}"
-            )
+            f"\nID {self.id}"
+            f"\t{self.player_1.name} : {self.score_1}" + "\n"
+            f"\t{self.player_2.name} : {self.score_2}"
+        )
 
     @property
     def serialized(self):
         return {
-            "player_1": self[0][0].serialized,
-            "score_1": self[0][1],
-            "player_2": self[1][0].serialized,
-            "score_2": self[1][1],
+            "id": self.id,
+            "player_1": self.player_1.serialized,
+            "player_2": self.player_2.serialized,
+            "score_1": self.score_1,
+            "score_2": self.score_2,
         }
 
     def save(self):
-        self.id = matches_table.insert(self.serialized)
+        if self.id < 0:
+            self.id = matches_table.insert(self.serialized)
+            matches_table.update({"id": self.id}, doc_ids=[self.id])
+        else:
+            matches_table.update(
+                self.serialized,
+                where("id") == self.id  # type: ignore
+            )

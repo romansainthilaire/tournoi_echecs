@@ -1,7 +1,7 @@
 from pathlib import Path
-from datetime import date
+from typing import List
 
-from tinydb import TinyDB
+from tinydb import TinyDB, where
 
 
 db = TinyDB(Path(__file__).parent.parent / "db.json", indent=4)
@@ -14,37 +14,58 @@ class Player:
         self,
         first_name: str,
         last_name: str,
-        birth_day: int,
-        birth_month: int,
-        birth_year: int,
+        date_of_birth: str,
         sex: str,
-        ranking: int = 0
+        ranking: int = 0,
+        points: float = 0,
+        opponent_ids: List[int] = []
     ):
+        self.id = -1
         self.first_name = first_name.title()
         self.last_name = last_name.upper()
-        self.date_of_birth = date(birth_year, birth_month, birth_day)
+        self.date_of_birth = date_of_birth
         self.sex = sex
         self.ranking = ranking
+        self.points = points
+        self.opponent_ids = opponent_ids
+        self.name = self.first_name + " " + self.last_name
 
     def __str__(self):
         return (
-            f"{self.first_name} {self.last_name} ({self.sex})" + "\n"
-            f"Né le {self.date_of_birth.strftime('%d/%m/%Y')}" + "\n"
-            f"Classement : {self.ranking}"
-            )
+            f"\nID {self.id}" +
+            f"\t{self.name} ({self.sex})" + "\n"
+            f"\tNé le {self.date_of_birth}" + "\n"
+            f"\tClassement : {self.ranking}"
+        )
 
     @property
     def serialized(self):
         return {
+            "id": self.id,
             "first_name": self.first_name,
             "last_name": self.last_name,
-            "date_of_birth": self.date_of_birth.strftime("%d/%m/%Y"),
+            "date_of_birth": self.date_of_birth,
             "sex": self.sex,
-            "ranking": self.ranking
+            "ranking": self.ranking,
+            "points": self.points,
+            "opponent_ids": self.opponent_ids
         }
 
     def save(self):
-        self.id = players_table.insert(self.serialized)
+        if self.id < 0:
+            self.id = players_table.insert(self.serialized)
+            players_table.update({"id": self.id}, doc_ids=[self.id])
+        else:
+            players_table.update(
+                self.serialized,
+                where("id") == self.id  # type: ignore
+            )
 
     def set_ranking(self, ranking: int):
         self.ranking = ranking
+        self.save()
+
+    def already_played(self, other):
+        opponent_ids = set(self.opponent_ids)
+        other_opponent_ids = set(other.opponent_ids)
+        return len(opponent_ids.intersection(other_opponent_ids)) > 0
