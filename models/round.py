@@ -1,6 +1,5 @@
 from pathlib import Path
 from datetime import datetime
-from typing import List
 
 from tinydb import TinyDB, where
 
@@ -13,20 +12,13 @@ rounds_table = db.table("rounds")
 
 class Round:
 
-    def __init__(
-        self,
-        name: str,
-        matches: List[Match] = [],
-        start: datetime = datetime.now(),
-        end: datetime = datetime.max,
-        in_progress: bool = True
-    ):
+    def __init__(self, name: str):
         self.id = -1
         self.name = name
-        self.matches = matches
-        self.start = start
-        self.end = end
-        self.in_progress = in_progress
+        self.matches = []
+        self.start = datetime.now()
+        self.end = datetime.max
+        self.in_progress = True
 
     def __str__(self):
         start = self.start.strftime("%d/%m/%Y %H:%M:%S")

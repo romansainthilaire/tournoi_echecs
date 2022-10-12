@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 from tinydb import TinyDB, where
 
@@ -16,9 +15,7 @@ class Player:
         last_name: str,
         date_of_birth: str,
         sex: str,
-        ranking: int = 0,
-        points: float = 0,
-        opponent_ids: List[int] = []
+        ranking: int
     ):
         self.id = -1
         self.first_name = first_name.title()
@@ -26,8 +23,8 @@ class Player:
         self.date_of_birth = date_of_birth
         self.sex = sex
         self.ranking = ranking
-        self.points = points
-        self.opponent_ids = opponent_ids
+        self.points = float(0)
+        self.opponent_ids = []
         self.name = self.first_name + " " + self.last_name
 
     def __str__(self):
@@ -64,8 +61,3 @@ class Player:
     def set_ranking(self, ranking: int):
         self.ranking = ranking
         self.save()
-
-    def already_played(self, other):
-        opponent_ids = set(self.opponent_ids)
-        other_opponent_ids = set(other.opponent_ids)
-        return len(opponent_ids.intersection(other_opponent_ids)) > 0

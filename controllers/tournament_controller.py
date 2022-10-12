@@ -43,11 +43,12 @@ class TournamentController():
             description,
             location,
             time_control,
-            date,
-            total_rounds,
-            rounds_comp,
-            players,
-            rounds)
+            date
+        )
+        tournament.total_rounds = total_rounds
+        tournament.rounds_completed = rounds_comp
+        tournament.players = players
+        tournament.rounds = rounds
         tournament.id = id
         return tournament
 
@@ -80,14 +81,14 @@ class TournamentController():
         time_control = self.tournament_view.get_time_control()
         date = self.tournament_view.get_date()
         nb_players = self.tournament_view.get_nb_players()
-        nb_rounds = self.tournament_view.get_nb_rounds(nb_players)
+        total_rounds = self.tournament_view.get_total_rounds(nb_players)
         tournament = Tournament(
             name,
             description,
             location,
             time_control,
-            date,
-            nb_rounds
+            date
         )
+        tournament.total_rounds = total_rounds
         self.add_players_to_tournament(nb_players, tournament)
         tournament.save()

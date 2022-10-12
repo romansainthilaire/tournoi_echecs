@@ -11,24 +11,20 @@ matches_table = db.table("matches")
 
 class Match():
 
-    def __init__(
-        self,
-        player_1: Player,
-        player_2: Player,
-        score_1: float = 0,
-        score_2: float = 0
-    ):
+    def __init__(self, player_1: Player, player_2: Player):
         self.id = -1
         self.player_1 = player_1
         self.player_2 = player_2
-        self.score_1 = score_1
-        self.score_2 = score_2
+        self.score_1 = float(-1)
+        self.score_2 = float(-1)
 
     def __str__(self):
+        score_1 = "" if self.score_1 < 0 else f" : {self.score_1}"
+        score_2 = "" if self.score_2 < 0 else f" : {self.score_2}"
         return (
             f"\nID {self.id}"
-            f"\t{self.player_1.name} : {self.score_1}" + "\n"
-            f"\t{self.player_2.name} : {self.score_2}"
+            f"\t{self.player_1.name}{score_1}" + "\n"
+            f"\t{self.player_2.name}{score_2}"
         )
 
     @property

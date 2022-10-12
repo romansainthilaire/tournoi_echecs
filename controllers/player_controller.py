@@ -19,7 +19,11 @@ class PlayerController():
         date_of_birth = serialized_player["date_of_birth"]  # type: ignore
         sex = serialized_player["sex"]  # type: ignore
         ranking = serialized_player["ranking"]  # type: ignore
+        points = serialized_player["points"]  # type: ignore
+        opponent_ids = serialized_player["opponent_ids"]  # type: ignore
         player = Player(first_name, last_name, date_of_birth, sex, ranking)
+        player.points = points
+        player.opponent_ids = opponent_ids
         player.id = id
         return player
 

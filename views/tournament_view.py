@@ -77,8 +77,8 @@ class TournamentView:
                 print("\tNombre impair de joueurs.")
         return nb_players
 
-    def get_nb_rounds(self, nb_players: int) -> int:
-        nb_max_rounds = int(nb_players / 2)
+    def get_total_rounds(self, nb_players: int) -> int:
+        nb_max_rounds = nb_players - 1
         nb_rounds = -1
         while nb_rounds < 1 or nb_rounds > nb_max_rounds:
             try:

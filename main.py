@@ -4,7 +4,6 @@ from tinydb import TinyDB
 
 from views.player_view import PlayerView
 from views.match_view import MatchView
-from views.round_view import RoundView
 from views.tournament_view import TournamentView
 from views.main_view import MainView
 from controllers.player_controller import PlayerController
@@ -22,13 +21,12 @@ tournaments_table = db.table("tournaments")
 
 player_view = PlayerView(players_table)
 match_view = MatchView(matches_table)
-round_view = RoundView(rounds_table)
 tournament_view = TournamentView(tournaments_table, players_table)
 main_view = MainView()
 
 player_controller = PlayerController(player_view)
 match_controller = MatchController(match_view, player_controller)
-round_controller = RoundController(round_view, match_controller)
+round_controller = RoundController(rounds_table, match_controller)
 tournament_controller = TournamentController(
     tournament_view,
     player_controller,
@@ -121,7 +119,7 @@ while action != 0:
                 f"\n\tJOUEURS DU TOURNOI '{tournament.name}'" +
                 "\n\t→ Par classement"
             )
-            players = tournament.get_players_sorted_by_name()
+            players = tournament.get_players_sorted_by_ranking()
             for player in players:
                 print(player)
 
@@ -138,11 +136,13 @@ while action != 0:
                     "\nOpération impossible : un round est déjà en "
                     "cours sur ce tournoi."
                 )
+            elif tournament.rounds_completed == tournament.total_rounds:
+                print("\nOpération impossible : le tournoi est terminé.")
             else:
                 tournament.start_round()
                 print(
                     f"\n\t{tournament.rounds[-1].name} initialisé."
-                    f"\n\t→ {len(tournament.rounds[-1].matches)} matchs "
+                    f"\n\n\t→ {len(tournament.rounds[-1].matches)} matchs "
                     f"générés pour le tournoi '{tournament.name}'."
                 )
 
@@ -154,13 +154,15 @@ while action != 0:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
-            if (
-                tournament.rounds == [] or
-                not tournament.rounds[-1].in_progress
-            ):
+            if tournament.rounds == []:
                 print(
                     "\nOpération impossible : " +
                     "aucun round n'a été initialisé pour ce tournoi."
+                )
+            elif not tournament.rounds[-1].in_progress:
+                print(
+                    "\nOpération impossible : " +
+                    "aucun round en cours sur ce tournoi."
                 )
             else:
                 matches = tournament.rounds[-1].matches
@@ -186,7 +188,7 @@ while action != 0:
                     "aucun round n'a été initialisé pour ce tournoi."
                 )
             else:
-                print(f"\n\tTournoi : {tournament.name}")
+                print(f"\n\tROUNDS DU TOURNOI '{tournament.name}'")
                 for round in tournament.rounds:
                     print(round)
 
@@ -204,7 +206,7 @@ while action != 0:
                     "aucun round n'a été initialisé pour ce tournoi."
                 )
             else:
-                print(f"\n\tTournoi : {tournament.name}")
+                print(f"\n\tMATCHS DU TOURNOIS '{tournament.name}'")
                 for round in tournament.rounds:
                     for match in round.matches:
                         print(match)

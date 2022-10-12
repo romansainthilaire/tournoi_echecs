@@ -24,7 +24,9 @@ class MatchController():
         player_2 = self.player_controller.get_player_by_id(id_player_2)
         score_1 = serialized_match["score_1"]  # type: ignore
         score_2 = serialized_match["score_2"]  # type: ignore
-        match = Match(player_1, player_2, score_1, score_2)
+        match = Match(player_1, player_2)
+        match.score_1 = score_1
+        match.score_2 = score_2
         match.id = id
         return match
 
@@ -36,7 +38,12 @@ class MatchController():
             player_1.name,
             player_1.id,
             player_2.name,
-            player_2.id)
+            player_2.id
+        )
+        if match.score_1 < 0:
+            match.score_1 = 0
+        if match.score_2 < 0:
+            match.score_2 = 0
         if winner_id == player_1.id:
             match.score_1 += 1
             player_1.points += 1

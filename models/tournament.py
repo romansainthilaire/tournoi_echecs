@@ -20,22 +20,18 @@ class Tournament():
         description: str,
         location: str,
         time_control: str,
-        date: str,
-        total_rounds: int = 4,
-        rounds_completed: int = 0,
-        players: List[Player] = [],
-        rounds: List[Round] = [],
+        date: str
     ):
         self.id = -1
         self.name = name.title()
-        self.description = description
-        self.location = location.title()
+        self.description = description[0].upper() + description[1:]
+        self.location = location[0].upper() + location[1:]
         self.time_control = time_control
         self.date = date
-        self.total_rounds = total_rounds
-        self.rounds_completed = rounds_completed
-        self.players = players
-        self.rounds = rounds
+        self.total_rounds = 4
+        self.rounds_completed = 0
+        self.players = []
+        self.rounds = []
 
     def __str__(self):
         return (
@@ -46,7 +42,7 @@ class Tournament():
             f"\tContrôle de temps : {self.time_control}" + "\n"
             f"\tDate : {self.date}" + "\n"
             f"\tNombre de joueurs : {len(self.players)}" + "\n"
-            f"\tTours réalisés : {self.rounds_completed} / {self.total_rounds}"
+            f"\tRounds réalisés : {self.rounds_completed}/{self.total_rounds}"
         )
 
     @property
@@ -89,8 +85,7 @@ class Tournament():
     def get_players_sorted_by_points(self) -> List[Player]:
         return sorted(
             self.players,
-            key=lambda player: (player.points, player.ranking, player.name),
-            reverse=True
+            key=lambda player: (-player.points, player.ranking, player.name),
         )
 
     def add_player(self, player: Player):
@@ -98,52 +93,42 @@ class Tournament():
         self.save()
 
     def add_round(self):
-        if self.rounds_completed == self.total_rounds:
-            print("Le tournois est terminé.")
-        else:
-            round_name = f"Round {self.rounds_completed + 1}"
-            round = Round(round_name)
-            round.save()
-            self.rounds.append(round)
+        round_name = f"Round {self.rounds_completed + 1}"
+        round = Round(round_name)
+        round.save()
+        self.rounds.append(round)
 
     def add_matches(self):
         current_round = self.rounds[-1]
         if self.rounds_completed == 0:  # first_round
             players = self.get_players_sorted_by_ranking()
-            best_players = players[:len(players)//2]
-            print("best_players")
-            print([p.name + " " for p in best_players])
-            worst_players = players[len(players)//2:]
-            print("worst_players")
-            print([p.name + " " for p in worst_players])
+            best_players = players[:len(players) // 2]
+            worst_players = players[len(players) // 2:]
             for player_1, player_2 in zip(best_players, worst_players):
                 player_1.opponent_ids.append(player_2.id)
                 player_2.opponent_ids.append(player_1.id)
                 match = Match(player_1, player_2)
+                player_1.save()
+                player_2.save()
                 match.save()
                 current_round.add_match(match)
         else:
-            players = self.get_players_sorted_by_ranking()
-            even_players = [p for i, p in enumerate(players)if i % 2 == 0]
-            odd_players = [p for i, p in enumerate(players) if i % 2 != 0]
-            while even_players != []:
-                player_1 = even_players[0]
-                player_2 = odd_players[0]
-                if player_1.already_played(player_2):
-                    odd_players = odd_players[1:] + odd_players[:1]
-                    continue
-                even_players.remove(player_1)
-                odd_players.remove(player_2)
-                player_1.opponent_ids.append(player_2.id)
-                player_2.opponent_ids.append(player_1.id)
-                match = Match(player_1, player_2)
-                match.save()
-                current_round.add_match(match)
-                odd_players = sorted(
-                    odd_players,
-                    key=lambda player: (player.points, player.ranking),
-                    reverse=True
-                )
+            players = self.get_players_sorted_by_points()
+            while True:
+                player_1 = players.pop(0)
+                for player_2 in players:
+                    if player_1.id not in player_2.opponent_ids:
+                        player_1.opponent_ids.append(player_2.id)
+                        player_2.opponent_ids.append(player_1.id)
+                        match = Match(player_1, player_2)
+                        player_1.save()
+                        player_2.save()
+                        match.save()
+                        current_round.add_match(match)
+                        players.remove(player_2)
+                        break
+                if players == []:
+                    break
 
     def start_round(self):
         self.add_round()
