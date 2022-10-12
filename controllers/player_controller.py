@@ -9,21 +9,26 @@ from views.player_view import PlayerView
 class PlayerController():
 
     def __init__(self, player_view: PlayerView):
-        self.player_view = player_view
+        self.player_view: PlayerView = player_view
 
     def get_player_by_id(self, id) -> Player:
         serialized_player = self.player_view.players_table.get(
-            where("id") == id)  # type: ignore
-        first_name = serialized_player["first_name"]  # type: ignore
-        last_name = serialized_player["last_name"]  # type: ignore
-        date_of_birth = serialized_player["date_of_birth"]  # type: ignore
-        sex = serialized_player["sex"]  # type: ignore
-        ranking = serialized_player["ranking"]  # type: ignore
-        points = serialized_player["points"]  # type: ignore
-        opponent_ids = serialized_player["opponent_ids"]  # type: ignore
+            where("id") == id
+        )
+        if serialized_player is None:
+            return Player("", "", "", "", 0)
+        first_name = serialized_player["first_name"]
+        last_name = serialized_player["last_name"]
+        date_of_birth = serialized_player["date_of_birth"]
+        sex = serialized_player["sex"]
+        ranking = serialized_player["ranking"]
+        points = serialized_player["points"]
+        opponent_ids = serialized_player["opponent_ids"]
+        tournament_id = serialized_player["tournament_id"]
         player = Player(first_name, last_name, date_of_birth, sex, ranking)
         player.points = points
         player.opponent_ids = opponent_ids
+        player.tournament_id = tournament_id
         player.id = id
         return player
 
@@ -46,7 +51,7 @@ class PlayerController():
         players = self.get_all_players()
         return sorted(
             players,
-            key=lambda player: (player.ranking, player.name)
+            key=lambda player: (-player.ranking, player.name)
         )
 
     def add_new_player(self):

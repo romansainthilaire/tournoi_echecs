@@ -4,7 +4,7 @@ from tinydb.table import Table
 class MatchView:
 
     def __init__(self, matches_table: Table):
-        self.matches_table = matches_table
+        self.matches_table: Table = matches_table
 
     def get_winner_id(
         self,

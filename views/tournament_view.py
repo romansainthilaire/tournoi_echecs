@@ -12,8 +12,8 @@ class TournamentView:
         tournaments_table: Table,
         players_table: Table
     ):
-        self.tournaments_table = tournaments_table
-        self.players_table = players_table
+        self.tournaments_table: Table = tournaments_table
+        self.players_table: Table = players_table
 
     def get_id(self) -> int:
         tournaments = self.tournaments_table.all()
@@ -57,13 +57,12 @@ class TournamentView:
                 continue
         return date.strftime("%d/%m/%Y")
 
-    def get_nb_players(self) -> int:
-        nb_max_players = len(self.players_table.all())
+    def get_nb_players(self, nb_available_players: int) -> int:
         nb_players = -1
         while (
             nb_players < 4 or
             nb_players % 2 != 0 or
-            nb_players > nb_max_players
+            nb_players > nb_available_players
         ):
             try:
                 nb_players = int(input("\t- Nombre de joueurs : "))
@@ -71,8 +70,8 @@ class TournamentView:
                 continue
             if -1 < nb_players < 4:
                 print("\tNombre minimum de joueurs : 4")
-            elif nb_players > nb_max_players:
-                print("\tNombre de joueurs enregistrés insuffisant.")
+            elif nb_players > nb_available_players:
+                print("\tNombre de joueurs disponibles insuffisant.")
             elif nb_players > 4 and nb_players % 2 != 0:
                 print("\tNombre impair de joueurs.")
         return nb_players
@@ -82,12 +81,12 @@ class TournamentView:
         nb_rounds = -1
         while nb_rounds < 1 or nb_rounds > nb_max_rounds:
             try:
-                nb_rounds = int(input("\t- Nombre de tours : "))
+                nb_rounds = int(input("\t- Nombre de rounds : "))
             except ValueError:
                 continue
             if nb_rounds > nb_max_rounds:
                 print(
-                    f"\tNombre de tours maximal pour {nb_players} joueurs : " +
+                    f"\tNombre de rounds maximal pour {nb_players} joueurs : "
                     f"{nb_max_rounds}"
                 )
         return nb_rounds
@@ -95,7 +94,8 @@ class TournamentView:
     def get_player_id(
         self,
         index: int,
-        added_player_ids: List[int]
+        added_player_ids: List[int],
+        available_player_ids: List[int]
     ) -> int:
         id = -1
         while True:
@@ -105,6 +105,11 @@ class TournamentView:
                 continue
             if id not in [player['id'] for player in self.players_table.all()]:
                 print("\t\tCet ID ne correspond à aucun joueur.")
+            elif id not in available_player_ids:
+                print(
+                    "\t\tCet ID n'est pas disponible "
+                    "(joueur déjà pris sur un autre tournois)."
+                )
             elif id in added_player_ids:
                 print("\t\tVous avez déjà ajouté ce joueur.")
             else:

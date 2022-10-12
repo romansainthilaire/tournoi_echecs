@@ -6,7 +6,7 @@ from tinydb.table import Table
 class PlayerView:
 
     def __init__(self, players_table: Table):
-        self.players_table = players_table
+        self.players_table: Table = players_table
 
     def get_id(self) -> int:
         players = self.players_table.all()
@@ -49,7 +49,7 @@ class PlayerView:
         ranking = -1
         while ranking < 1:
             try:
-                ranking = int(input("\t- Classement : "))
+                ranking = int(input("\t- Classement Elo : "))
             except ValueError:
                 continue
         return ranking
@@ -59,7 +59,7 @@ class PlayerView:
         while ranking < 1:
             try:
                 ranking = int(input(
-                    f"\tNouveau classement pour {player_name} : "
+                    f"\tNouveau classement Elo pour {player_name} : "
                 ))
             except ValueError:
                 continue

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from tinydb import TinyDB, where
+from tinydb import TinyDB
 
 from models.player import Player
 from models.match import Match
@@ -22,16 +22,16 @@ class Tournament():
         time_control: str,
         date: str
     ):
-        self.id = -1
-        self.name = name.title()
-        self.description = description[0].upper() + description[1:]
-        self.location = location[0].upper() + location[1:]
-        self.time_control = time_control
-        self.date = date
-        self.total_rounds = 4
-        self.rounds_completed = 0
-        self.players = []
-        self.rounds = []
+        self.id: int = -1
+        self.name: str = name.title()
+        self.description: str = description[0].upper() + description[1:]
+        self.location: str = location[0].upper() + location[1:]
+        self.time_control: str = time_control
+        self.date: str = date
+        self.total_rounds: int = 4
+        self.rounds_completed: int = 0
+        self.players: List[Player] = []
+        self.rounds: List[Round] = []
 
     def __str__(self):
         return (
@@ -65,10 +65,7 @@ class Tournament():
             self.id = tournaments_table.insert(self.serialized)
             tournaments_table.update({"id": self.id}, doc_ids=[self.id])
         else:
-            tournaments_table.update(
-                self.serialized,
-                where("id") == self.id  # type: ignore
-            )
+            tournaments_table.update(self.serialized, doc_ids=[self.id])
 
     def get_players_sorted_by_name(self) -> List[Player]:
         return sorted(
@@ -79,13 +76,13 @@ class Tournament():
     def get_players_sorted_by_ranking(self) -> List[Player]:
         return sorted(
             self.players,
-            key=lambda player: (player.ranking, player.name)
+            key=lambda player: (-player.ranking, player.name)
         )
 
     def get_players_sorted_by_points(self) -> List[Player]:
         return sorted(
             self.players,
-            key=lambda player: (-player.points, player.ranking, player.name),
+            key=lambda player: (-player.points, -player.ranking, player.name),
         )
 
     def add_player(self, player: Player):
@@ -140,3 +137,6 @@ class Tournament():
         current_round.finish()
         self.rounds_completed += 1
         self.save()
+        if self.rounds_completed == self.total_rounds:
+            for player in self.players:
+                player.reset()

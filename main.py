@@ -40,68 +40,65 @@ while action != 0:
     action = main_view.get_action()
 
     if action == 1:
-        print("\n\tNOUVEAU JOUEUR\n")
+        main_view.print_new_player_headline()
         player_controller.add_new_player()
 
     elif action == 2:
         all_players = player_controller.get_all_players()
-        if len(all_players) == 0:
-            print("\nOpération impossible : aucun joueur n'est enregistré.")
+        if all_players == []:
+            main_view.print_no_player_error()
         else:
-            print("\n\tMODIFICATION DU CLASSEMENT D'UN JOUEUR\n")
+            main_view.print_ranking_update_headline()
             player_controller.update_player_ranking()
 
     elif action == 3:
         all_players = player_controller.get_all_players_sorted_by_name()
-        if len(all_players) == 0:
-            print("\nOpération impossible : aucun joueur n'est enregistré.")
+        if all_players == []:
+            main_view.print_no_player_error()
         else:
-            print("\n\tTOUS LES JOUEURS\n\t→ Par ordre alphabétique")
+            main_view.print_players_by_name_headline()
             for player in all_players:
                 print(player)
 
     elif action == 4:
         all_players = player_controller.get_all_players_sorted_by_ranking()
-        if len(all_players) == 0:
-            print("\nOpération impossible : aucun joueur n'est enregistré.")
+        if all_players == []:
+            main_view.print_no_player_error()
         else:
-            print("\n\tTOUS LES JOUEURS\n\t→ Par classement")
+            main_view.print_players_by_ranking_headline()
             for player in all_players:
                 print(player)
 
     elif action == 5:
         all_players = player_controller.get_all_players()
-        if len(all_players) == 0:
-            print("\nOpération impossible : aucun joueur n'est enregistré.")
-        elif len(all_players) < 4:
-            print(
-                "\nOpération impossible : " +
-                "nombre de joueurs enregistrés insuffisant."
-            )
+        available_players = tournament_controller.get_available_players()
+        if all_players == []:
+            main_view.print_no_player_error()
+        elif len(available_players) < 4:
+            main_view.print_not_enougth_available_players_error()
         else:
-            print("\n\tNOUVEAU TOURNOIS\n")
-            tournament_controller.add_new_tournament()
+            main_view.print_new_tournament_headline()
+            tournament_controller.add_new_tournament(available_players)
 
     elif action == 6:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
-            print("\n\tTOUS LES TOURNOIS")
+            main_view.print_all_tournaments_headline()
             for tournament in all_tournaments:
                 print(tournament)
 
     elif action == 7:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
-            print(
-                f"\n\tJOUEURS DU TOURNOI '{tournament.name}'"
-                "\n\t→ Par ordre alphabétique"
+            main_view.print_tournament_players_by_name_headline(
+                tournament.name
             )
             players = tournament.get_players_sorted_by_name()
             for player in players:
@@ -109,15 +106,14 @@ while action != 0:
 
     elif action == 8:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
-            print(
-                f"\n\tJOUEURS DU TOURNOI '{tournament.name}'" +
-                "\n\t→ Par classement"
+            main_view.print_tournament_players_by_ranking_headline(
+                tournament.name
             )
             players = tournament.get_players_sorted_by_ranking()
             for player in players:
@@ -125,88 +121,74 @@ while action != 0:
 
     elif action == 9:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
             if tournament.rounds != [] and tournament.rounds[-1].in_progress:
-                print(
-                    "\nOpération impossible : un round est déjà en "
-                    "cours sur ce tournoi."
-                )
+                main_view.print_round_in_progress_error(tournament.name)
             elif tournament.rounds_completed == tournament.total_rounds:
-                print("\nOpération impossible : le tournoi est terminé.")
+                main_view.print_tournament_completed_error(tournament.name)
             else:
                 tournament.start_round()
-                print(
-                    f"\n\t{tournament.rounds[-1].name} initialisé."
-                    f"\n\n\t→ {len(tournament.rounds[-1].matches)} matchs "
-                    f"générés pour le tournoi '{tournament.name}'."
+                round = tournament.rounds[-1]
+                main_view.print_started_round_info(
+                    round.name,
+                    len(round.matches),
+                    tournament.name
                 )
 
     elif action == 10:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
             if tournament.rounds == []:
-                print(
-                    "\nOpération impossible : " +
-                    "aucun round n'a été initialisé pour ce tournoi."
-                )
+                main_view.print_no_round_error(tournament.name)
             elif not tournament.rounds[-1].in_progress:
-                print(
-                    "\nOpération impossible : " +
-                    "aucun round en cours sur ce tournoi."
-                )
+                main_view.print_no_round_in_progress_error(tournament.name)
             else:
-                matches = tournament.rounds[-1].matches
-                print(
-                    f"\n\tTournoi : {tournament.name}"
-                    f"\n\n\tRésultats du {tournament.rounds[-1].name} :"
+                round = tournament.rounds[-1]
+                main_view.print_tournament_results_headline(
+                    tournament.name,
+                    round.name
                 )
-                for index, match in enumerate(matches):
+                for index, match in enumerate(round.matches):
                     match_controller.set_scores(match, index + 1)
                 tournament.finish_round()
 
     elif action == 11:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
             if tournament.rounds == []:
-                print(
-                    "\nOpération impossible : " +
-                    "aucun round n'a été initialisé pour ce tournoi."
-                )
+                main_view.print_no_round_error(tournament.name)
             else:
-                print(f"\n\tROUNDS DU TOURNOI '{tournament.name}'")
+                main_view.print_tournament_rounds_headline(tournament.name)
                 for round in tournament.rounds:
                     print(round)
 
     elif action == 12:
         all_tournaments = tournament_controller.get_all_tournaments()
-        if len(all_tournaments) == 0:
-            print("\nOpération impossible : aucun tournoi n'est enregistré.")
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
         else:
             print()
             id = tournament_controller.tournament_view.get_id()
             tournament = tournament_controller.get_tournament_by_id(id)
             if tournament.rounds == []:
-                print(
-                    "\nOpération impossible : " +
-                    "aucun round n'a été initialisé pour ce tournoi."
-                )
+                main_view.print_no_round_error(tournament.name)
             else:
-                print(f"\n\tMATCHS DU TOURNOIS '{tournament.name}'")
+                main_view.print_tournament_matches_headline(tournament.name)
                 for round in tournament.rounds:
                     for match in round.matches:
                         print(match)

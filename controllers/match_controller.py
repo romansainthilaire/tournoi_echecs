@@ -1,5 +1,7 @@
 from tinydb import where
 
+from typing import Optional
+
 from models.match import Match
 from views.match_view import MatchView
 from controllers.player_controller import PlayerController
@@ -12,18 +14,19 @@ class MatchController():
         match_view: MatchView,
         player_controller: PlayerController
     ):
-        self.match_view = match_view
-        self.player_controller = player_controller
+        self.match_view: MatchView = match_view
+        self.player_controller: PlayerController = player_controller
 
-    def get_match_by_id(self, id) -> Match:
-        serialized_match = self.match_view.matches_table.get(
-            where("id") == id)  # type: ignore
-        id_player_1 = serialized_match["player_1"]["id"]  # type: ignore
-        id_player_2 = serialized_match["player_2"]["id"]  # type: ignore
+    def get_match_by_id(self, id) -> Optional[Match]:
+        serialized_match = self.match_view.matches_table.get(where("id") == id)
+        if serialized_match is None:
+            return None
+        id_player_1 = serialized_match["player_1"]["id"]
+        id_player_2 = serialized_match["player_2"]["id"]
         player_1 = self.player_controller.get_player_by_id(id_player_1)
         player_2 = self.player_controller.get_player_by_id(id_player_2)
-        score_1 = serialized_match["score_1"]  # type: ignore
-        score_2 = serialized_match["score_2"]  # type: ignore
+        score_1 = serialized_match["score_1"]
+        score_2 = serialized_match["score_2"]
         match = Match(player_1, player_2)
         match.score_1 = score_1
         match.score_2 = score_2
@@ -40,9 +43,9 @@ class MatchController():
             player_2.name,
             player_2.id
         )
-        if match.score_1 < 0:
+        if match.score_1 is None:
             match.score_1 = 0
-        if match.score_2 < 0:
+        if match.score_2 is None:
             match.score_2 = 0
         if winner_id == player_1.id:
             match.score_1 += 1
