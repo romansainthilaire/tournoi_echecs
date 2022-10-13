@@ -22,14 +22,14 @@ class PlayerController():
         date_of_birth = serialized_player["date_of_birth"]
         sex = serialized_player["sex"]
         ranking = serialized_player["ranking"]
+        tournament_id = serialized_player["tournament_id"]
         points = serialized_player["points"]
         opponent_ids = serialized_player["opponent_ids"]
-        tournament_id = serialized_player["tournament_id"]
         player = Player(first_name, last_name, date_of_birth, sex, ranking)
+        player.id = id
+        player.tournament_id = tournament_id
         player.points = points
         player.opponent_ids = opponent_ids
-        player.tournament_id = tournament_id
-        player.id = id
         return player
 
     def get_all_players(self) -> List[Player]:

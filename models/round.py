@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 from tinydb import TinyDB
 
@@ -12,11 +12,17 @@ rounds_table = db.table("rounds")
 
 
 class Round:
+    """Represents a round of a chess tournament."""
 
     DATE_FORMAT: str = "%d/%m/%Y %H:%M:%S"
 
     def __init__(self, name: str):
-        self.id: int = -1
+        """Inits a round.
+
+        Arguments:
+            name -- name of the round
+        """
+        self.id: Optional[int] = None
         self.name: str = name
         self.matches: List[Match] = []
         self.start: datetime = datetime.now()
@@ -24,23 +30,23 @@ class Round:
         self.in_progress: bool = True
 
     def __str__(self):
+        """String representation of a match."""
         start = self.start.strftime(Round.DATE_FORMAT)
         end = self.end.strftime(Round.DATE_FORMAT)
-        if self.in_progress:
-            return (
-                f"\nID {self.id} \t{self.name}"
-                f"\n\tDébut : {start}"
-                "\n\tFin : (en cours)"
-            )
-        else:
-            return (
-                f"\nID {self.id}\t{self.name}"
-                f"\n\tDébut : {start}"
-                f"\n\tFin : {end}"
-            )
+        end_or_in_progress = end if not self.in_progress else "en cours"
+        return (
+            f"\nID {self.id}\t{self.name}"
+            f"\n\tDébut : {start}"
+            f"\n\tFin : {end_or_in_progress}"
+        )
 
     @property
     def serialized(self):
+        """Turns a round object into a dictionary.
+
+        Returns:
+            A dictionary of the round attributes.
+        """
         return {
             "id": self.id,
             "name": self.name,
@@ -51,17 +57,26 @@ class Round:
         }
 
     def save(self):
-        if self.id < 0:
+        """Saves or updates a round into a TinyDB database."""
+        if self.id is None:
             self.id = rounds_table.insert(self.serialized)
             rounds_table.update({"id": self.id}, doc_ids=[self.id])
         else:
             rounds_table.update(self.serialized, doc_ids=[self.id])
+            for match in self.matches:
+                match.save()
 
     def add_match(self, match: Match):
+        """Adds a match to the round.
+
+        Arguments:
+            match -- match object
+        """
         self.matches.append(match)
         self.save()
 
     def finish(self):
+        """Ends the round."""
         self.end = datetime.now()
         self.in_progress = False
         self.save()

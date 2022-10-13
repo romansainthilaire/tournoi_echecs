@@ -30,9 +30,9 @@ class RoundController():
         end = datetime.strptime(serialized_round["end"], Round.DATE_FORMAT)
         in_progress = serialized_round["in_progress"]
         round = Round(name)
+        round.id = id
         round.matches = matches
         round.start = start
         round.end = end
         round.in_progress = in_progress
-        round.id = id
         return round

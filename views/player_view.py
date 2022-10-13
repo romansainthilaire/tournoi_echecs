@@ -23,10 +23,10 @@ class PlayerView:
         return id
 
     def get_first_name(self) -> str:
-        return input("\t- Prénom : ")
+        return input("\t- Prénom : ").title()
 
     def get_last_name(self) -> str:
-        return input("\t- Nom : ")
+        return input("\t- Nom : ").upper()
 
     def get_date_of_birth(self) -> str:
         while True:

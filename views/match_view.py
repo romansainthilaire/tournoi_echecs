@@ -1,3 +1,5 @@
+from typing import Optional
+
 from tinydb.table import Table
 
 
@@ -10,9 +12,9 @@ class MatchView:
         self,
         match_index: int,
         name_player_1: str,
-        id_player_1: int,
+        id_player_1: Optional[int],
         name_player_2: str,
-        id_player_2: int
+        id_player_2: Optional[int]
     ) -> int:
         print(
             f"\n\tMatch {match_index}"

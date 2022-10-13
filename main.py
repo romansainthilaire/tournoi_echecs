@@ -11,7 +11,6 @@ from controllers.match_controller import MatchController
 from controllers.round_controller import RoundController
 from controllers.tournament_controller import TournamentController
 
-
 db = TinyDB(Path(__file__).parent / "db.json", indent=4)
 
 players_table = db.table("players")
@@ -74,7 +73,7 @@ while action != 0:
         available_players = tournament_controller.get_available_players()
         if all_players == []:
             main_view.print_no_player_error()
-        elif len(available_players) < 4:
+        elif len(available_players) < 2:
             main_view.print_not_enougth_available_players_error()
         else:
             main_view.print_new_tournament_headline()
@@ -100,9 +99,8 @@ while action != 0:
             main_view.print_tournament_players_by_name_headline(
                 tournament.name
             )
-            players = tournament.get_players_sorted_by_name()
-            for player in players:
-                print(player)
+            tv = tournament_controller.tournament_view
+            tv.print_players_sorted_by_name(tournament.id)
 
     elif action == 8:
         all_tournaments = tournament_controller.get_all_tournaments()
@@ -115,11 +113,24 @@ while action != 0:
             main_view.print_tournament_players_by_ranking_headline(
                 tournament.name
             )
-            players = tournament.get_players_sorted_by_ranking()
-            for player in players:
-                print(player)
+            tv = tournament_controller.tournament_view
+            tv.print_players_sorted_by_ranking(tournament.id)
 
     elif action == 9:
+        all_tournaments = tournament_controller.get_all_tournaments()
+        if all_tournaments == []:
+            main_view.print_no_tournament_error()
+        else:
+            print()
+            id = tournament_controller.tournament_view.get_id()
+            tournament = tournament_controller.get_tournament_by_id(id)
+            main_view.print_tournament_players_by_ranking_headline(
+                tournament.name
+            )
+            tv = tournament_controller.tournament_view
+            tv.print_players_sorted_by_points(tournament.id)
+
+    elif action == 10:
         all_tournaments = tournament_controller.get_all_tournaments()
         if all_tournaments == []:
             main_view.print_no_tournament_error()
@@ -140,7 +151,7 @@ while action != 0:
                     tournament.name
                 )
 
-    elif action == 10:
+    elif action == 11:
         all_tournaments = tournament_controller.get_all_tournaments()
         if all_tournaments == []:
             main_view.print_no_tournament_error()
@@ -162,7 +173,7 @@ while action != 0:
                     match_controller.set_scores(match, index + 1)
                 tournament.finish_round()
 
-    elif action == 11:
+    elif action == 12:
         all_tournaments = tournament_controller.get_all_tournaments()
         if all_tournaments == []:
             main_view.print_no_tournament_error()
@@ -177,7 +188,7 @@ while action != 0:
                 for round in tournament.rounds:
                     print(round)
 
-    elif action == 12:
+    elif action == 13:
         all_tournaments = tournament_controller.get_all_tournaments()
         if all_tournaments == []:
             main_view.print_no_tournament_error()

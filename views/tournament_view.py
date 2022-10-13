@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from typing import List
+from typing import List, Optional
 
+from tinydb import where
 from tinydb.table import Table
 
 
@@ -30,13 +31,16 @@ class TournamentView:
         return id
 
     def get_name(self) -> str:
-        return input("\t- Nom du tournoi : ")
+        name = input("\t- Nom du tournoi : ")
+        return name.title()
 
     def get_description(self) -> str:
-        return input("\t- Description : ")
+        description = input("\t- Description : ")
+        return description[0].upper() + description[1:]
 
     def get_location(self) -> str:
-        return input("\t- Lieu : ")
+        location = input("\t- Lieu : ")
+        return location[0].upper() + location[1:]
 
     def get_time_control(self) -> str:
         time_control = ""
@@ -60,7 +64,7 @@ class TournamentView:
     def get_nb_players(self, nb_available_players: int) -> int:
         nb_players = -1
         while (
-            nb_players < 4 or
+            nb_players < 2 or
             nb_players % 2 != 0 or
             nb_players > nb_available_players
         ):
@@ -68,11 +72,9 @@ class TournamentView:
                 nb_players = int(input("\t- Nombre de joueurs : "))
             except ValueError:
                 continue
-            if -1 < nb_players < 4:
-                print("\tNombre minimum de joueurs : 4")
-            elif nb_players > nb_available_players:
+            if nb_players > nb_available_players:
                 print("\tNombre de joueurs disponibles insuffisant.")
-            elif nb_players > 4 and nb_players % 2 != 0:
+            elif nb_players > 0 and nb_players % 2 != 0:
                 print("\tNombre impair de joueurs.")
         return nb_players
 
@@ -95,7 +97,7 @@ class TournamentView:
         self,
         index: int,
         added_player_ids: List[int],
-        available_player_ids: List[int]
+        available_player_ids: List[int | None]
     ) -> int:
         id = -1
         while True:
@@ -115,3 +117,61 @@ class TournamentView:
             else:
                 break
         return id
+
+    def get_players_info(self, tournament_id: Optional[int]) -> List[dict]:
+        serialized_tournament = self.tournaments_table.get(
+            where("id") == tournament_id  # type: ignore
+        )
+        serialized_players = serialized_tournament["players"]  # type: ignore
+        players_info = []
+        for serialized_player in serialized_players:
+            name = (
+                f"{serialized_player['first_name']} "
+                f"{serialized_player['last_name']}"
+            )
+            ranking = serialized_player['ranking']
+            points = serialized_player['points']
+            info = (
+                f"\nID {serialized_player['id']}"
+                f"\t{name} ({serialized_player['sex']})"
+                f"\n\tNé le {serialized_player['date_of_birth']}"
+                f"\n\tClassement Elo : {ranking}"
+                f"\n\tPoints : {points}"
+            )
+            players_info.append({
+                "name": name,
+                "ranking": ranking,
+                "points": points,
+                "info": info
+            })
+        return players_info
+
+    def print_players_sorted_by_name(self, tournament_id: Optional[int]):
+        players_info = sorted(
+            self.get_players_info(tournament_id),
+            key=lambda player_info: player_info["name"]
+        )
+        for player_info in players_info:
+            print(player_info["info"])
+
+    def print_players_sorted_by_ranking(self, tournament_id: Optional[int]):
+        players_info = sorted(
+            self.get_players_info(tournament_id),
+            key=lambda player_info: (
+                -player_info["ranking"],
+                player_info["name"]
+            )
+        )
+        for player_info in players_info:
+            print(player_info["info"])
+
+    def print_players_sorted_by_points(self, tournament_id: Optional[int]):
+        players_info = sorted(
+            self.get_players_info(tournament_id),
+            key=lambda player_info: (
+                -player_info["points"],
+                -player_info["ranking"],
+            )
+        )
+        for player_info in players_info:
+            print(player_info["info"])

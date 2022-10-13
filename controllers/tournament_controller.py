@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from tinydb import where
 
@@ -49,11 +49,11 @@ class TournamentController():
             time_control,
             date
         )
+        tournament.id = id
         tournament.total_rounds = total_rounds
         tournament.rounds_completed = rounds_comp
         tournament.players = players
         tournament.rounds = rounds
-        tournament.id = id
         return tournament
 
     def get_all_tournaments(self) -> List[Tournament]:
@@ -71,7 +71,7 @@ class TournamentController():
                 active_tournaments.append(tournament)
         return active_tournaments
 
-    def get_active_tournament_ids(self) -> List[int]:
+    def get_active_tournament_ids(self) -> List[Optional[int | None]]:
         return [tournament.id for tournament in self.get_active_tournaments()]
 
     def add_players_to_tournament(
@@ -88,10 +88,9 @@ class TournamentController():
                 available_player_ids
             )
             player = self.player_controller.get_player_by_id(player_id)
-            added_player_ids.append(player.id)
-            tournament.add_player(player)
             player.tournament_id = tournament.id
-            player.save()
+            tournament.add_player(player)
+            added_player_ids.append(player.id)
 
     def add_new_tournament(self, available_players: List[Player]):
         name = self.tournament_view.get_name()
@@ -110,6 +109,7 @@ class TournamentController():
             date
         )
         tournament.total_rounds = total_rounds
+        tournament.save()
         self.add_players_to_tournament(
             nb_players,
             tournament,

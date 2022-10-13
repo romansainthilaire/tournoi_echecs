@@ -9,22 +9,23 @@ class MainView():
         print("6.   Afficher tous les tournois")
         print("7.   Afficher les joueurs d'un tournois par odre alphabétique")
         print("8.   Afficher les joueurs d'un tournois par classement Elo")
-        print("9.   Initialiser un round")
-        print("10.  Rentrer les résultats d'un round")
-        print("11.  Afficher les rounds d'un tournois")
-        print("12.  Afficher les matchs d'un tournois")
+        print("9.   Afficher les joueurs d'un tournois par points")
+        print("10.  Initialiser un round")
+        print("11.  Rentrer les résultats d'un round")
+        print("12.  Afficher les rounds d'un tournois")
+        print("13.  Afficher les matchs d'un tournois")
         print("0.   Quitter")
 
     def get_action(self):
         action = -1
-        while action not in range(13):
+        while action not in range(14):
             try:
                 action = int(input("\nAction : "))
             except ValueError:
-                print("\nVeuillez entrer un nombre compris entre 0 et 12.")
+                print("\nVeuillez entrer un nombre compris entre 0 et 13.")
                 continue
             if action not in range(13):
-                print("\nVeuillez entrer un nombre compris entre 0 et 12.")
+                print("\nVeuillez entrer un nombre compris entre 0 et 13.")
         return action
 
     def print_new_player_headline(self):
