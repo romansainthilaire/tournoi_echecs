@@ -113,5 +113,5 @@ class MainView():
     def print_no_round_error(self, tournament_name: str):
         print(f"\nOpération impossible : aucun round n'a été initialisé pour le tournois '{tournament_name}'.")
 
-    def print_tournament_completed_error(self, tournament_name: str):
+    def print_tournament_finished_error(self, tournament_name: str):
         print(f"\nOpération impossible : le tournoi '{tournament_name}' est terminé.")

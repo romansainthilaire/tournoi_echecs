@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 if tournament.rounds != [] and tournament.rounds[-1].in_progress:
                     main_view.print_round_in_progress_error(tournament.name)
                 elif tournament.rounds_completed == tournament.total_rounds:
-                    main_view.print_tournament_completed_error(tournament.name)
+                    main_view.print_tournament_finished_error(tournament.name)
                 else:
                     tournament.start_round()
                     round = tournament.rounds[-1]
