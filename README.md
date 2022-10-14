@@ -16,7 +16,7 @@ Un tournoi se déroule de la manière suivante :
 L'utilisateur peut :
 - créer plusieurs tournois en parallèle,
 - modifier le classement d'un joueur à tout moment,
-- afficher les informations d'un tournois (participants, résultats des matchs) à tout moment.
+- afficher les informations d'un tournoi (participants, résultats des matchs) à tout moment.
 
 ## Lancer l'application :
 - créer un environnement virtuel : python -m venv [nom]
