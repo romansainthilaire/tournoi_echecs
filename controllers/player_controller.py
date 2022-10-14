@@ -11,10 +11,18 @@ class PlayerController():
     def __init__(self, player_view: PlayerView):
         self.player_view: PlayerView = player_view
 
-    def get_player_by_id(self, id) -> Player:
-        serialized_player = self.player_view.players_table.get(
-            where("id") == id
-        )
+    def get_player_by_id(self, id: int) -> Player:
+        """
+        Gets a player object according to its id.
+        The player attributes are extracted from the database.
+
+        Arguments:
+            id -- id of the player
+
+        Returns:
+            A player object.
+        """
+        serialized_player = self.player_view.players_table.get(where("id") == id)  # type: ignore
         if serialized_player is None:
             return Player("", "", "", "", 0)
         first_name = serialized_player["first_name"]
@@ -33,6 +41,11 @@ class PlayerController():
         return player
 
     def get_all_players(self) -> List[Player]:
+        """Gets a list of all the players.
+
+        Returns:
+            A list of all the players.
+        """
         players = []
         serialized_players = self.player_view.players_table.all()
         for serialized_player in serialized_players:
@@ -41,20 +54,25 @@ class PlayerController():
         return players
 
     def get_all_players_sorted_by_name(self) -> List[Player]:
+        """Gets a list of all the players sorted by name.
+
+        Returns:
+            A list of all the players sorted by name.
+        """
         players = self.get_all_players()
-        return sorted(
-            players,
-            key=lambda player: player.name
-        )
+        return sorted(players, key=lambda player: player.name)
 
     def get_all_players_sorted_by_ranking(self) -> List[Player]:
+        """Gets a list of all the players sorted by Elo ranking.
+
+        Returns:
+            A list of all the players sorted by Elo ranking.
+        """
         players = self.get_all_players()
-        return sorted(
-            players,
-            key=lambda player: (-player.ranking, player.name)
-        )
+        return sorted(players, key=lambda player: (-player.ranking, player.name))
 
     def add_new_player(self):
+        """Adds a new player to the database."""
         first_name = self.player_view.get_first_name()
         last_name = self.player_view.get_last_name()
         date_of_birth = self.player_view.get_date_of_birth()
@@ -64,7 +82,8 @@ class PlayerController():
         player.save()
 
     def update_player_ranking(self):
-        player_id = self.player_view.get_id()
+        """Updates the Elo ranking of the player."""
+        player_id = self.player_view.get_player_id()
         player = self.get_player_by_id(player_id)
         new_ranking = self.player_view.get_new_ranking(player.name)
         player.set_ranking(new_ranking)

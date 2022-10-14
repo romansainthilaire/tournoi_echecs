@@ -38,7 +38,7 @@ class Tournament():
         self.location: str = location
         self.time_control: str = time_control
         self.date: str = date
-        self.total_rounds: int = 4
+        self.total_rounds: int = 0
         self.rounds_completed: int = 0
         self.players: List[Player] = []
         self.rounds: List[Round] = []
@@ -77,7 +77,7 @@ class Tournament():
         }
 
     def save(self):
-        """Saves or updates a tournament into a TinyDB database."""
+        """Inserts or updates a tournament into a TinyDB database."""
         if self.id is None:
             self.id = tournaments_table.insert(self.serialized)
             tournaments_table.update({"id": self.id}, doc_ids=[self.id])
@@ -94,10 +94,7 @@ class Tournament():
         Returns:
             The tournament players sorted by Elo ranking.
         """
-        return sorted(
-            self.players,
-            key=lambda player: (-player.ranking, player.name)
-        )
+        return sorted(self.players, key=lambda player: (-player.ranking, player.name))
 
     def get_players_sorted_by_points(self) -> List[Player]:
         """Sorts the tournament players by points.
@@ -105,11 +102,7 @@ class Tournament():
         Returns:
             The tournament players sorted by points.
         """
-        return sorted(
-            self.players,
-            key=lambda player: (player.points, player.ranking),
-            reverse=True
-        )
+        return sorted(self.players, key=lambda player: (player.points, player.ranking), reverse=True)
 
     def add_player(self, player: Player):
         """Adds a player to the tournament."""
@@ -118,8 +111,7 @@ class Tournament():
 
     def add_round(self):
         """Adds a round to the tournament."""
-        round_name = f"Round {self.rounds_completed + 1}"
-        round = Round(round_name)
+        round = Round(f"Round {self.rounds_completed + 1}")
         self.rounds.append(round)
         self.save()
 
@@ -127,14 +119,15 @@ class Tournament():
         """
         Generates and adds matches to the tournament.
 
-        If it is the first round, matches are generated as follows:
+        Matches are generated as follows.
+
+        If it is the first round:
             1. players are sorted by ranking
-            2. players are divided in two halves: upper halve and lower halve
-            3. the first player of the upper halve is paired with the first
-              player of the lower halve
+            2. players are divided into two halves: upper halve and lower halve
+            3. the first player of the upper halve is paired with the first player of the lower halve
             4. steps 1 to 3 are repeated until all players are paired
 
-        If it isn't the first round, matches are generated as follows:
+        If it is not the first round:
             1. players are sorted by points
             2. the first player is paired with the second player
             3. if the first player already played with the second player
@@ -150,18 +143,16 @@ class Tournament():
                 player_1.opponent_ids.append(player_2.id)
                 player_2.opponent_ids.append(player_1.id)
                 match = Match(player_1, player_2)
-                match.save()
                 current_round.add_match(match)
-        else:
+        else:  # not first round
             players = self.get_players_sorted_by_points()
             while True:
                 player_1 = players.pop(0)
                 for player_2 in players:
-                    if player_1.id not in player_2.opponent_ids:
+                    if player_1.id not in player_2.opponent_ids or len(players) == 1:
                         player_1.opponent_ids.append(player_2.id)
                         player_2.opponent_ids.append(player_1.id)
                         match = Match(player_1, player_2)
-                        match.save()
                         current_round.add_match(match)
                         players.remove(player_2)
                         break

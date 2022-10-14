@@ -14,7 +14,7 @@ rounds_table = db.table("rounds")
 class Round:
     """Represents a round of a chess tournament."""
 
-    DATE_FORMAT: str = "%d/%m/%Y %H:%M:%S"
+    DATETIME_FORMAT: str = "%d/%m/%Y %H:%M:%S"
 
     def __init__(self, name: str):
         """Inits a round.
@@ -31,8 +31,8 @@ class Round:
 
     def __str__(self):
         """String representation of a match."""
-        start = self.start.strftime(Round.DATE_FORMAT)
-        end = self.end.strftime(Round.DATE_FORMAT)
+        start = self.start.strftime(Round.DATETIME_FORMAT)
+        end = self.end.strftime(Round.DATETIME_FORMAT)
         end_or_in_progress = end if not self.in_progress else "en cours"
         return (
             f"\nID {self.id}\t{self.name}"
@@ -51,13 +51,13 @@ class Round:
             "id": self.id,
             "name": self.name,
             "matches": [match.serialized for match in self.matches],
-            "start": self.start.strftime(Round.DATE_FORMAT),
-            "end": self.end.strftime(Round.DATE_FORMAT),
+            "start": self.start.strftime(Round.DATETIME_FORMAT),
+            "end": self.end.strftime(Round.DATETIME_FORMAT),
             "in_progress": self.in_progress
         }
 
     def save(self):
-        """Saves or updates a round into a TinyDB database."""
+        """Inserts or updates a round into a TinyDB database."""
         if self.id is None:
             self.id = rounds_table.insert(self.serialized)
             rounds_table.update({"id": self.id}, doc_ids=[self.id])

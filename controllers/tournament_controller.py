@@ -21,10 +21,18 @@ class TournamentController():
         self.player_controller: PlayerController = player_controller
         self.round_controller: RoundController = round_controller
 
-    def get_tournament_by_id(self, id) -> Tournament:
-        serialized_tournament = self.tournament_view.tournaments_table.get(
-            where("id") == id
-        )
+    def get_tournament_by_id(self, id: int) -> Tournament:
+        """
+        Gets a tournament object according to its id.
+        The tournament attributes are extracted from the database.
+
+        Arguments:
+            id -- id of the tournament
+
+        Returns:
+            A tournament object.
+        """
+        serialized_tournament = self.tournament_view.tournaments_table.get(where("id") == id)  # type: ignore
         if serialized_tournament is None:
             return Tournament("", "", "", "", "")
         name = serialized_tournament["name"]
@@ -33,7 +41,7 @@ class TournamentController():
         time_control = serialized_tournament["time_control"]
         date = serialized_tournament["date"]
         total_rounds = serialized_tournament["total_rounds"]
-        rounds_comp = serialized_tournament["rounds_completed"]
+        rounds_completed = serialized_tournament["rounds_completed"]
         players = []
         for player in serialized_tournament["players"]:
             player = self.player_controller.get_player_by_id(player["id"])
@@ -42,21 +50,20 @@ class TournamentController():
         for round in serialized_tournament["rounds"]:
             round = self.round_controller.get_round_by_id(round["id"])
             rounds.append(round)
-        tournament = Tournament(
-            name,
-            description,
-            location,
-            time_control,
-            date
-        )
+        tournament = Tournament(name, description, location, time_control, date)
         tournament.id = id
         tournament.total_rounds = total_rounds
-        tournament.rounds_completed = rounds_comp
+        tournament.rounds_completed = rounds_completed
         tournament.players = players
         tournament.rounds = rounds
         return tournament
 
     def get_all_tournaments(self) -> List[Tournament]:
+        """Gets a list of all the tournaments.
+
+        Returns:
+            A list of all the tournaments.
+        """
         tournaments = []
         serialized_tournaments = self.tournament_view.tournaments_table.all()
         for serialized_tournament in serialized_tournaments:
@@ -65,6 +72,11 @@ class TournamentController():
         return tournaments
 
     def get_active_tournaments(self) -> List[Tournament]:
+        """Gets a list of the tournaments that are not finished yet.
+
+        Returns:
+            A list of active tournaments.
+        """
         active_tournaments = []
         for tournament in self.get_all_tournaments():
             if tournament.rounds_completed < tournament.total_rounds:
@@ -72,27 +84,36 @@ class TournamentController():
         return active_tournaments
 
     def get_active_tournament_ids(self) -> List[Optional[int | None]]:
+        """Gets a list of the ids of the tournaments that are not finished yet.
+
+        Returns:
+            A list of active tournament ids.
+        """
         return [tournament.id for tournament in self.get_active_tournaments()]
 
-    def add_players_to_tournament(
-        self, n: int,
-        tournament: Tournament,
-        available_players: List[Player]
-    ):
+    def add_n_players_to_tournament(self, n: int, tournament: Tournament, available_players: List[Player]):
+        """Adds players to a tournament.
+
+        Arguments:
+            n -- number of players to be added to the tournament
+            tournament -- tournament object
+            available_players -- players that are not already playing in another tournament
+        """
         added_player_ids = []
         available_player_ids = [player.id for player in available_players]
         for index in range(1, n + 1):
-            player_id = self.tournament_view.get_player_id(
-                index,
-                added_player_ids,
-                available_player_ids
-            )
+            player_id = self.tournament_view.get_player_id(index, added_player_ids, available_player_ids)
             player = self.player_controller.get_player_by_id(player_id)
             player.tournament_id = tournament.id
             tournament.add_player(player)
             added_player_ids.append(player.id)
 
     def add_new_tournament(self, available_players: List[Player]):
+        """Creates a new tournament.
+
+        Arguments:
+            available_players -- players that are not already playing in another tournament
+        """
         name = self.tournament_view.get_name()
         description = self.tournament_view.get_description()
         location = self.tournament_view.get_location()
@@ -101,26 +122,29 @@ class TournamentController():
         nb_available_players = len(available_players)
         nb_players = self.tournament_view.get_nb_players(nb_available_players)
         total_rounds = self.tournament_view.get_total_rounds(nb_players)
-        tournament = Tournament(
-            name,
-            description,
-            location,
-            time_control,
-            date
-        )
+        tournament = Tournament(name, description, location, time_control, date)
         tournament.total_rounds = total_rounds
-        tournament.save()
-        self.add_players_to_tournament(
-            nb_players,
-            tournament,
-            available_players
-        )
+        tournament.save()  # add_n_players_to_tournament() requires a tournament with an id
+        self.add_n_players_to_tournament(nb_players, tournament, available_players)
         tournament.save()
 
     def player_in_active_tournament(self, player: Player) -> bool:
+        """Checks if a player alreary plays in another tournament.
+
+        Arguments:
+            player -- a player object
+
+        Returns:
+            True is the player alreary plays in another tournament.
+        """
         return player.tournament_id in self.get_active_tournament_ids()
 
     def get_available_players(self) -> List[Player]:
+        """Gets a list of the players that are not already playing in another tournament.
+
+        Returns:
+            A list of available players.
+        """
         available_players = []
         for player in self.player_controller.get_all_players():
             if not self.player_in_active_tournament(player):

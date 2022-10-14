@@ -74,7 +74,7 @@ class Player:
         }
 
     def save(self):
-        """Saves or updates a player into a TinyDB database."""
+        """Inserts or updates a player into a TinyDB database."""
         if self.id is None:
             self.id = players_table.insert(self.serialized)
             players_table.update({"id": self.id}, doc_ids=[self.id])
@@ -87,11 +87,8 @@ class Player:
         self.save()
 
     def reset(self):
-        """
-        Resets the points, the opponent_ids
-        and the tournament_id attributes.
-        """
+        """Resets the tournament_id, points and opponent_ids attributes."""
+        self.tournament_id = None
         self.points = None
         self.opponent_ids = []
-        self.tournament_id = None
         self.save()

@@ -4,20 +4,31 @@ from tinydb.table import Table
 
 
 class MatchView:
+    """Gets match information from the user or shows match information to the user."""
 
     def __init__(self, matches_table: Table):
         self.matches_table: Table = matches_table
 
     def get_winner_id(
         self,
-        match_index: int,
         name_player_1: str,
         id_player_1: Optional[int],
         name_player_2: str,
         id_player_2: Optional[int]
     ) -> int:
+        """
+        Gets the id of the player who wins the match.
+
+        Arguments:
+            name_player_1 -- name of the first player
+            id_player_1 -- id of the first player
+            name_player_2 -- name of the second player
+            id_player_2 -- id of the second player
+
+        Returns:
+            The id of the winner or 0 if ex-aequo.
+        """
         print(
-            f"\n\tMatch {match_index}"
             f"\n\t · {name_player_1} - ID {id_player_1}"
             f"\n\t · {name_player_2} - ID {id_player_2}\n"
         )

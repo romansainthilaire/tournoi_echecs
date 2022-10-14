@@ -53,7 +53,7 @@ class Match():
         }
 
     def save(self):
-        """Saves or updates a match into a TinyDB database."""
+        """Inserts or updates a match into a TinyDB database."""
         if self.id is None:
             self.id = matches_table.insert(self.serialized)
             matches_table.update({"id": self.id}, doc_ids=[self.id])
