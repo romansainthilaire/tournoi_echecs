@@ -4,7 +4,7 @@ Ce projet a été réalisé dans le cadre de la formation OpenClassrooms *Dével
 
 → Conception selon le design pattern **Model-View-Controller (MVC)**
 
-Le programme sert à l'organisation de **tournois d'échecs**.
+Le programme sert à l'organisation de tournois d'échecs.
 
 Un tournoi se déroule de la manière suivante :
 
