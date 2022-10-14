@@ -4,6 +4,8 @@ Ce projet a été réalisé dans le cadre de la formation OpenClassrooms *Dével
 
 → Conception selon le design pattern **Model-View-Controller (MVC)**
 
+## Présentation de l'application
+
 Le programme sert à l'organisation de tournois d'échecs.
 
 Un tournoi se déroule de la manière suivante :
@@ -18,13 +20,13 @@ L'utilisateur peut :
 - modifier le classement d'un joueur à tout moment,
 - afficher les informations d'un tournoi (participants, résultats des matchs) à tout moment.
 
-## Lancer l'application :
+## Lancement de l'application
 - créer un environnement virtuel : python -m venv [nom]
 - activer l'environnement virtuel : [nom]\Scripts\activate
 - installer les packages : pip install -r requirements.txt
 - exécuter le script : python main.py
 
-## Lancer l'application (Anaconda) :
+## Lancement de l'application (Anaconda)
 - créer un environnement virtuel : conda create --name [nom]
 - activer l'environnement virtuel : conda activate [nom]
 - installer pip : conda install pip
