@@ -3,6 +3,7 @@ from typing import List
 from tinydb import where
 
 from models.player import Player
+from models.tournament import Tournament
 from views.player_view import PlayerView
 
 
@@ -81,9 +82,14 @@ class PlayerController():
         player = Player(first_name, last_name, date_of_birth, sex, ranking)
         player.save()
 
-    def update_player_ranking(self):
-        """Updates the Elo ranking of the player."""
+    def update_player_ranking(self) -> Player:
+        """Updates the Elo ranking of a player.
+
+        Returns:
+            The player.
+        """
         player_id = self.player_view.get_player_id()
         player = self.get_player_by_id(player_id)
         new_ranking = self.player_view.get_new_ranking(player.name)
         player.set_ranking(new_ranking)
+        return player

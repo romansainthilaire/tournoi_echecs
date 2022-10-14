@@ -53,7 +53,10 @@ if __name__ == "__main__":
                 main_view.print_no_player_error()
             else:
                 main_view.print_player_ranking_update_headline()
-                player_controller.update_player_ranking()
+                player = player_controller.update_player_ranking()
+                tounament_id = player.tournament_id
+                tournament = tournament_controller.get_tournament_by_id(tounament_id)
+                tournament.save()
 
         elif action == 3:
             all_players_sorted_by_name = player_controller.get_all_players_sorted_by_name()

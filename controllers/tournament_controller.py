@@ -21,7 +21,7 @@ class TournamentController():
         self.player_controller: PlayerController = player_controller
         self.round_controller: RoundController = round_controller
 
-    def get_tournament_by_id(self, id: int) -> Tournament:
+    def get_tournament_by_id(self, id: Optional[int]) -> Tournament:
         """
         Gets a tournament object according to its id.
         The tournament attributes are extracted from the database.
