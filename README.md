@@ -1,4 +1,4 @@
-# Tournoi Échecs
+# Tournois d'échecs
 
 Ce projet a été réalisé dans le cadre de la formation OpenClassrooms *Développeur d'application - Python*.
 
