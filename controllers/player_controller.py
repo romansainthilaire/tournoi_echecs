@@ -3,7 +3,6 @@ from typing import List
 from tinydb import where
 
 from models.player import Player
-from models.tournament import Tournament
 from views.player_view import PlayerView
 
 
