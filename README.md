@@ -25,3 +25,6 @@ L'utilisateur peut :
 - activer l'environnement virtuel : [nom]\Scripts\activate
 - installer les packages : pip install -r requirements.txt
 - exécuter le script : python main.py
+
+## Génération d'un nouveau rapport flake8-html
+- entrer la commande suivante : flake8 --format=html --htmldir=flake-report
