@@ -14,18 +14,18 @@ class RoundController():
         self.round_view: RoundView = round_view
         self.match_controller: MatchController = match_controller
 
-    def get_round_by_id(self, id: int) -> Optional[Round]:
+    def get_round_by_id(self, round_id: int) -> Optional[Round]:
         """
         Gets a round object according to its id.
         The round attributes are extracted from the database.
 
         Arguments:
-            id -- id of the round
+            round_id -- id of the round
 
         Returns:
             A round object.
         """
-        serialized_round = self.round_view.rounds_table.get(where("id") == id)  # type: ignore
+        serialized_round = self.round_view.rounds_table.get(where("id") == round_id)  # type: ignore
         if serialized_round is None:
             return None
         name = serialized_round["name"]
@@ -36,7 +36,7 @@ class RoundController():
         end = datetime.strptime(serialized_round["end"], Round.DATETIME_FORMAT)
         in_progress = serialized_round["in_progress"]
         round = Round(name)
-        round.id = id
+        round.id = round_id
         round.matches = matches
         round.start = start
         round.end = end

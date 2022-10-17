@@ -13,18 +13,18 @@ class MatchController():
         self.match_view: MatchView = match_view
         self.player_controller: PlayerController = player_controller
 
-    def get_match_by_id(self, id: int) -> Optional[Match]:
+    def get_match_by_id(self, match_id: int) -> Optional[Match]:
         """
         Gets a match object according to its id.
         The match attributes are extracted from the database.
 
         Arguments:
-            id -- id of the match
+            match_id -- id of the match
 
         Returns:
             A match object.
         """
-        serialized_match = self.match_view.matches_table.get(where("id") == id)  # type: ignore
+        serialized_match = self.match_view.matches_table.get(where("id") == match_id)  # type: ignore
         if serialized_match is None:
             return None
         player_1 = self.player_controller.get_player_by_id(serialized_match["player_1"]["id"])
@@ -32,7 +32,7 @@ class MatchController():
         score_1 = serialized_match["score_1"]
         score_2 = serialized_match["score_2"]
         match = Match(player_1, player_2)
-        match.id = id
+        match.id = match_id
         match.score_1 = score_1
         match.score_2 = score_2
         return match

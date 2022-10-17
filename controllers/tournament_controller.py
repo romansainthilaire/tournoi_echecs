@@ -21,18 +21,18 @@ class TournamentController():
         self.player_controller: PlayerController = player_controller
         self.round_controller: RoundController = round_controller
 
-    def get_tournament_by_id(self, id: Optional[int]) -> Tournament:
+    def get_tournament_by_id(self, tournament_id: Optional[int]) -> Tournament:
         """
         Gets a tournament object according to its id.
         The tournament attributes are extracted from the database.
 
         Arguments:
-            id -- id of the tournament
+            tournament_id -- id of the tournament
 
         Returns:
             A tournament object.
         """
-        serialized_tournament = self.tournament_view.tournaments_table.get(where("id") == id)  # type: ignore
+        serialized_tournament = self.tournament_view.tournaments_table.get(where("id") == tournament_id)  # type: ignore
         if serialized_tournament is None:
             return Tournament("", "", "", "", "")
         name = serialized_tournament["name"]
@@ -51,7 +51,7 @@ class TournamentController():
             round = self.round_controller.get_round_by_id(round["id"])
             rounds.append(round)
         tournament = Tournament(name, description, location, time_control, date)
-        tournament.id = id
+        tournament.id = tournament_id
         tournament.total_rounds = total_rounds
         tournament.rounds_completed = rounds_completed
         tournament.players = players

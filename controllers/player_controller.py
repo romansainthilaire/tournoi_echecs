@@ -11,18 +11,18 @@ class PlayerController():
     def __init__(self, player_view: PlayerView):
         self.player_view: PlayerView = player_view
 
-    def get_player_by_id(self, id: int) -> Player:
+    def get_player_by_id(self, player_id: int) -> Player:
         """
         Gets a player object according to its id.
         The player attributes are extracted from the database.
 
         Arguments:
-            id -- id of the player
+            player_id -- id of the player
 
         Returns:
             A player object.
         """
-        serialized_player = self.player_view.players_table.get(where("id") == id)  # type: ignore
+        serialized_player = self.player_view.players_table.get(where("id") == player_id)  # type: ignore
         if serialized_player is None:
             return Player("", "", "", "", 0)
         first_name = serialized_player["first_name"]
@@ -34,7 +34,7 @@ class PlayerController():
         points = serialized_player["points"]
         opponent_ids = serialized_player["opponent_ids"]
         player = Player(first_name, last_name, date_of_birth, sex, ranking)
-        player.id = id
+        player.id = player_id
         player.tournament_id = tournament_id
         player.points = points
         player.opponent_ids = opponent_ids
