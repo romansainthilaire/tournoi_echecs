@@ -85,7 +85,7 @@ if __name__ == "__main__":
                 main_view.print_not_enougth_available_players_error()
             else:
                 main_view.print_new_tournament_headline()
-                tournament_controller.add_new_tournament(available_players)
+                tournament_controller.add_new_tournament()
 
         elif action == 6:
             all_tournaments = tournament_controller.get_all_tournaments()

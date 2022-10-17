@@ -36,7 +36,7 @@ class Player:
         self.ranking: int = ranking
         self.tournament_id: Optional[int] = None
         self.points: Optional[float] = None
-        self.opponent_ids: List[Optional[int | None]] = []
+        self.opponent_ids: List[Optional[int]] = []
         self.name: str = self.first_name + " " + self.last_name
 
     def __str__(self):

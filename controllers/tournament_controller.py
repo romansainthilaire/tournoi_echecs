@@ -83,61 +83,13 @@ class TournamentController():
                 active_tournaments.append(tournament)
         return active_tournaments
 
-    def get_active_tournament_ids(self) -> List[Optional[int | None]]:
+    def get_active_tournament_ids(self) -> List[Optional[int]]:
         """Gets a list of the ids of the tournaments that are not finished yet.
 
         Returns:
             A list of active tournament ids.
         """
         return [tournament.id for tournament in self.get_active_tournaments()]
-
-    def add_n_players_to_tournament(self, n: int, tournament: Tournament, available_players: List[Player]):
-        """Adds players to a tournament.
-
-        Arguments:
-            n -- number of players to be added to the tournament
-            tournament -- tournament object
-            available_players -- players that are not already playing in another tournament
-        """
-        added_player_ids = []
-        available_player_ids = [player.id for player in available_players]
-        for index in range(1, n + 1):
-            player_id = self.tournament_view.get_player_id(index, added_player_ids, available_player_ids)
-            player = self.player_controller.get_player_by_id(player_id)
-            player.tournament_id = tournament.id
-            tournament.add_player(player)
-            added_player_ids.append(player.id)
-
-    def add_new_tournament(self, available_players: List[Player]):
-        """Creates a new tournament.
-
-        Arguments:
-            available_players -- players that are not already playing in another tournament
-        """
-        name = self.tournament_view.get_name()
-        description = self.tournament_view.get_description()
-        location = self.tournament_view.get_location()
-        time_control = self.tournament_view.get_time_control()
-        date = self.tournament_view.get_date()
-        nb_available_players = len(available_players)
-        nb_players = self.tournament_view.get_nb_players(nb_available_players)
-        total_rounds = self.tournament_view.get_total_rounds(nb_players)
-        tournament = Tournament(name, description, location, time_control, date)
-        tournament.total_rounds = total_rounds
-        tournament.save()  # add_n_players_to_tournament() requires a tournament with an id
-        self.add_n_players_to_tournament(nb_players, tournament, available_players)
-        tournament.save()
-
-    def player_in_active_tournament(self, player: Player) -> bool:
-        """Checks if a player alreary plays in another tournament.
-
-        Arguments:
-            player -- a player object
-
-        Returns:
-            True is the player alreary plays in another tournament.
-        """
-        return player.tournament_id in self.get_active_tournament_ids()
 
     def get_available_players(self) -> List[Player]:
         """Gets a list of the players that are not already playing in another tournament.
@@ -150,3 +102,51 @@ class TournamentController():
             if not self.player_in_active_tournament(player):
                 available_players.append(player)
         return available_players
+
+    def add_n_players_to_tournament(self, n: int, tournament: Tournament):
+        """Adds players to a tournament.
+
+        Arguments:
+            n -- number of players to be added to the tournament
+            tournament -- tournament object
+            available_players -- players that are not already playing in another tournament
+        """
+        added_player_ids = []
+        available_player_ids = [player.id for player in self.get_available_players()]
+        for index in range(1, n + 1):
+            player_id = self.tournament_view.get_player_id(index, added_player_ids, available_player_ids)
+            player = self.player_controller.get_player_by_id(player_id)
+            player.tournament_id = tournament.id
+            tournament.add_player(player)
+            added_player_ids.append(player.id)
+
+    def add_new_tournament(self):
+        """Creates a new tournament.
+
+        Arguments:
+            available_players -- players that are not already playing in another tournament
+        """
+        name = self.tournament_view.get_name()
+        description = self.tournament_view.get_description()
+        location = self.tournament_view.get_location()
+        time_control = self.tournament_view.get_time_control()
+        date = self.tournament_view.get_date()
+        nb_available_players = len(self.get_available_players())
+        nb_players = self.tournament_view.get_nb_players(nb_available_players)
+        total_rounds = self.tournament_view.get_total_rounds(nb_players)
+        tournament = Tournament(name, description, location, time_control, date)
+        tournament.total_rounds = total_rounds
+        tournament.save()  # add_n_players_to_tournament() requires a tournament with an id
+        self.add_n_players_to_tournament(nb_players, tournament)
+        tournament.save()
+
+    def player_in_active_tournament(self, player: Player) -> bool:
+        """Checks if a player alreary plays in another tournament.
+
+        Arguments:
+            player -- a player object
+
+        Returns:
+            True is the player alreary plays in another tournament.
+        """
+        return player.tournament_id in self.get_active_tournament_ids()
