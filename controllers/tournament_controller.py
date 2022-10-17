@@ -32,7 +32,9 @@ class TournamentController():
         Returns:
             A tournament object.
         """
-        serialized_tournament = self.tournament_view.tournaments_table.get(where("id") == tournament_id)  # type: ignore
+        serialized_tournament = self.tournament_view.tournaments_table.get(
+            where("id") == tournament_id  # type: ignore
+        )
         if serialized_tournament is None:
             return Tournament("", "", "", "", "")
         name = serialized_tournament["name"]
