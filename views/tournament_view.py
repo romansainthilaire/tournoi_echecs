@@ -133,7 +133,7 @@ class TournamentView:
         self,
         index: int,
         added_player_ids: List[int],
-        available_player_ids: List[int | None]
+        available_player_ids: List[Optional[int]]
     ) -> int:
         """Gets the id of a player, in order to create a new tournament.
 
