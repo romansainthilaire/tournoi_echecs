@@ -37,7 +37,7 @@ class Player:
         self.tournament_id: Optional[int] = None
         self.points: Optional[float] = None
         self.opponent_ids: List[Optional[int]] = []
-        self.name: str = self.first_name + " " + self.last_name
+        self.name: str = self.last_name + " " + self.first_name
 
     def __str__(self):
         """String representation of a player."""
