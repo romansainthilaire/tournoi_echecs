@@ -82,6 +82,9 @@ class TournamentView:
             date = input("\t- Date (JJ/MM/AAAA) : ")
             try:
                 date = datetime.strptime(date, "%d/%m/%Y")
+                if date < datetime.now():
+                    print("\tLa date du tournoi ne peut pas se situer dans le passé.")
+                    continue
                 break
             except ValueError:
                 print("\tFormat de date invalide.")
@@ -173,40 +176,45 @@ class TournamentView:
         serialized_tournament = self.tournaments_table.get(
             where("id") == tournament_id  # type: ignore
         )
-        serialized_players = serialized_tournament["players"]  # type: ignore
-        players_info = []
-        for serialized_player in serialized_players:
-            name = (
-                f"{serialized_player['last_name']} "
-                f"{serialized_player['first_name']}"
+        player_ids = serialized_tournament["player_ids"]  # type: ignore
+        serialized_players = []
+        for player_id in player_ids:
+            serialized_player = self.players_table.get(
+                where("id") == player_id  # type: ignore
             )
-            ranking = serialized_player['ranking']
-            points = serialized_player['points']
+            serialized_players.append(serialized_player)
+        player_points = serialized_tournament["player_points"]  # type: ignore
+        players_info = []
+        for serialized_player, points in zip(serialized_players, player_points):
+            first_name = serialized_player["first_name"]
+            last_name = serialized_player["last_name"]
+            ranking = serialized_player["ranking"]
             points = points if points is not None else 0
             info = (
                 f"\nID {serialized_player['id']}"
-                f"\t{name} ({serialized_player['sex']})"
+                f"\t{first_name} {last_name} ({serialized_player['sex']})"
                 f"\n\tNé le {serialized_player['date_of_birth']}"
                 f"\n\tClassement Elo : {ranking}"
                 f"\n\tPoints : {points}"
             )
             players_info.append({
-                "name": name,
+                "first_name": first_name,
+                "last_name": last_name,
                 "ranking": ranking,
                 "points": points,
                 "info": info
             })
         return players_info
 
-    def print_players_sorted_by_name(self, tournament_id: Optional[int]):
-        """Prints tournament players sorted by name.
+    def print_players_sorted_by_last_name(self, tournament_id: Optional[int]):
+        """Prints tournament players sorted by last name.
 
         Arguments:
             tournament_id -- id of the tournament
         """
         players_info = sorted(
             self.get_players_info(tournament_id),
-            key=lambda player_info: player_info["name"]
+            key=lambda player_info: (player_info["last_name"], player_info["first_name"])
         )
         for player_info in players_info:
             print(player_info["info"])
@@ -219,7 +227,7 @@ class TournamentView:
         """
         players_info = sorted(
             self.get_players_info(tournament_id),
-            key=lambda player_info: (-player_info["ranking"], player_info["name"])
+            key=lambda player_info: (-player_info["ranking"], player_info["last_name"], player_info["first_name"])
         )
         for player_info in players_info:
             print(player_info["info"])

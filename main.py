@@ -60,12 +60,12 @@ if __name__ == "__main__":
                     tournament.save()
 
         elif action == 3:
-            all_players_sorted_by_name = player_controller.get_all_players_sorted_by_name()
-            if all_players_sorted_by_name == []:
+            all_players_sorted_by_last_name = player_controller.get_all_players_sorted_by_last_name()
+            if all_players_sorted_by_last_name == []:
                 main_view.print_no_player_error()
             else:
-                main_view.print_all_players_sorted_by_name_headline()
-                for player in all_players_sorted_by_name:
+                main_view.print_all_players_sorted_by_last_name_headline()
+                for player in all_players_sorted_by_last_name:
                     print(player)
 
         elif action == 4:
@@ -105,8 +105,8 @@ if __name__ == "__main__":
                 print()
                 tournament_id = tournament_controller.tournament_view.get_tournament_id()
                 tournament = tournament_controller.get_tournament_by_id(tournament_id)
-                main_view.print_tournament_players_sorted_by_name_headline(tournament.name)
-                tournament_controller.tournament_view.print_players_sorted_by_name(tournament.id)
+                main_view.print_tournament_players_sorted_by_last_name_headline(tournament.name)
+                tournament_controller.tournament_view.print_players_sorted_by_last_name(tournament.id)
 
         elif action == 8:
             all_tournaments = tournament_controller.get_all_tournaments()
@@ -166,6 +166,10 @@ if __name__ == "__main__":
                         f"\n\tMatch {index + 1}"
                         match_controller.set_scores(match)
                     tournament.finish_round()
+                    if not round.in_progress:
+                        print("\n\tLe tournoi est terminé.")
+                        print("\n\tRésultats :")
+                        tournament_controller.tournament_view.print_players_sorted_by_points(tournament.id)
 
         elif action == 12:
             all_tournaments = tournament_controller.get_all_tournaments()

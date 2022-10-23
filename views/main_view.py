@@ -41,7 +41,7 @@ class MainView():
     def print_player_ranking_update_headline(self):
         print("\n\tMODIFICATION DU CLASSEMENT D'UN JOUEUR\n")
 
-    def print_all_players_sorted_by_name_headline(self):
+    def print_all_players_sorted_by_last_name_headline(self):
         print("\n\tTOUS LES JOUEURS\n\t→ Par ordre alphabétique")
 
     def print_all_players_sorted_by_ranking_headline(self):
@@ -53,7 +53,7 @@ class MainView():
     def print_all_tournaments_headline(self):
         print("\n\tTOUS LES TOURNOIS")
 
-    def print_tournament_players_sorted_by_name_headline(self, tournament_name: str):
+    def print_tournament_players_sorted_by_last_name_headline(self, tournament_name: str):
         print(
             f"\n\tJOUEURS DU TOURNOI '{tournament_name}'"
             "\n\t→ Par ordre alphabétique"

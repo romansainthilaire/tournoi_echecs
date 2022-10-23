@@ -53,14 +53,14 @@ class PlayerController():
             players.append(player)
         return players
 
-    def get_all_players_sorted_by_name(self) -> List[Player]:
-        """Gets a list of all the players sorted by name.
+    def get_all_players_sorted_by_last_name(self) -> List[Player]:
+        """Gets a list of all the players sorted by last name.
 
         Returns:
-            A list of all the players sorted by name.
+            A list of all the players sorted by last name.
         """
         players = self.get_all_players()
-        return sorted(players, key=lambda player: player.name)
+        return sorted(players, key=lambda player: (player.last_name, player.first_name))
 
     def get_all_players_sorted_by_ranking(self) -> List[Player]:
         """Gets a list of all the players sorted by Elo ranking.
@@ -69,7 +69,7 @@ class PlayerController():
             A list of all the players sorted by Elo ranking.
         """
         players = self.get_all_players()
-        return sorted(players, key=lambda player: (-player.ranking, player.name))
+        return sorted(players, key=lambda player: (-player.ranking, player.last_name, player.first_name))
 
     def add_new_player(self):
         """Adds a new player to the database."""

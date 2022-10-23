@@ -30,8 +30,8 @@ class RoundController():
             return None
         name = serialized_round["name"]
         matches = []
-        for match in serialized_round["matches"]:
-            matches.append(self.match_controller.get_match_by_id(match["id"]))
+        for match_id in serialized_round["match_ids"]:
+            matches.append(self.match_controller.get_match_by_id(match_id))
         start = datetime.strptime(serialized_round["start"], Round.DATETIME_FORMAT)
         end = datetime.strptime(serialized_round["end"], Round.DATETIME_FORMAT)
         in_progress = serialized_round["in_progress"]

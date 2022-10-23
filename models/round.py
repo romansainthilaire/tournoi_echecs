@@ -50,7 +50,7 @@ class Round:
         return {
             "id": self.id,
             "name": self.name,
-            "matches": [match.serialized for match in self.matches],
+            "match_ids": [match.id for match in self.matches],
             "start": self.start.strftime(Round.DATETIME_FORMAT),
             "end": self.end.strftime(Round.DATETIME_FORMAT),
             "in_progress": self.in_progress

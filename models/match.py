@@ -46,8 +46,8 @@ class Match():
         """
         return {
             "id": self.id,
-            "player_1": self.player_1.serialized,
-            "player_2": self.player_2.serialized,
+            "player_1_id": self.player_1.id,
+            "player_2_id": self.player_2.id,
             "score_1": self.score_1,
             "score_2": self.score_2,
         }

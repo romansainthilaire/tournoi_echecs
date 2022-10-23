@@ -27,8 +27,8 @@ class MatchController():
         serialized_match = self.match_view.matches_table.get(where("id") == match_id)  # type: ignore
         if serialized_match is None:
             return None
-        player_1 = self.player_controller.get_player_by_id(serialized_match["player_1"]["id"])
-        player_2 = self.player_controller.get_player_by_id(serialized_match["player_2"]["id"])
+        player_1 = self.player_controller.get_player_by_id(serialized_match["player_1_id"])
+        player_2 = self.player_controller.get_player_by_id(serialized_match["player_2_id"])
         score_1 = serialized_match["score_1"]
         score_2 = serialized_match["score_2"]
         match = Match(player_1, player_2)

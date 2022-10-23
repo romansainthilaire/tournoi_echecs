@@ -72,8 +72,9 @@ class Tournament():
             "date": self.date,
             "total_rounds": self.total_rounds,
             "rounds_completed": self.rounds_completed,
-            "players": [player.serialized for player in self.players],
-            "rounds": [round.serialized for round in self.rounds],
+            "player_ids": [player.id for player in self.players],
+            "player_points": [player.points for player in self.players],
+            "round_ids": [round.id for round in self.rounds],
         }
 
     def save(self):
@@ -94,7 +95,7 @@ class Tournament():
         Returns:
             The tournament players sorted by Elo ranking.
         """
-        return sorted(self.players, key=lambda player: (-player.ranking, player.name))
+        return sorted(self.players, key=lambda player: (-player.ranking, player.last_name, player.first_name))
 
     def get_players_sorted_by_points(self) -> List[Player]:
         """Sorts the tournament players by points.

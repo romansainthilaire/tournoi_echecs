@@ -45,12 +45,12 @@ class TournamentController():
         total_rounds = serialized_tournament["total_rounds"]
         rounds_completed = serialized_tournament["rounds_completed"]
         players = []
-        for player in serialized_tournament["players"]:
-            player = self.player_controller.get_player_by_id(player["id"])
+        for player_id in serialized_tournament["player_ids"]:
+            player = self.player_controller.get_player_by_id(player_id)
             players.append(player)
         rounds = []
-        for round in serialized_tournament["rounds"]:
-            round = self.round_controller.get_round_by_id(round["id"])
+        for round_id in serialized_tournament["round_ids"]:
+            round = self.round_controller.get_round_by_id(round_id)
             rounds.append(round)
         tournament = Tournament(name, description, location, time_control, date)
         tournament.id = tournament_id

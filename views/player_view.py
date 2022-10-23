@@ -54,6 +54,9 @@ class PlayerView:
             date_of_birth = input("\t- Date de naissance (JJ/MM/AAAA) : ")
             try:
                 date_of_birth = datetime.strptime(date_of_birth, "%d/%m/%Y")
+                if date_of_birth > datetime.now():
+                    print("\tLa date de naissance ne peut pas se situer dans le futur.")
+                    continue
                 break
             except ValueError:
                 print("\tFormat de date invalide.")
