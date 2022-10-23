@@ -177,8 +177,8 @@ class TournamentView:
         players_info = []
         for serialized_player in serialized_players:
             name = (
-                f"{serialized_player['first_name']} "
-                f"{serialized_player['last_name']}"
+                f"{serialized_player['last_name']} "
+                f"{serialized_player['first_name']}"
             )
             ranking = serialized_player['ranking']
             points = serialized_player['points']
