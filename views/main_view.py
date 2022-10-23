@@ -7,7 +7,7 @@ class MainView():
         print("4.   Afficher tous les joueurs par classement Elo")
         print("5.   Créer un tournoi")
         print("6.   Afficher tous les tournois")
-        print("7.   Afficher les joueurs d'un tournois par odre alphabétique")
+        print("7.   Afficher les joueurs d'un tournois par ordre alphabétique")
         print("8.   Afficher les joueurs d'un tournois par classement Elo")
         print("9.   Afficher les joueurs d'un tournois par points")
         print("10.  Initialiser un round")
