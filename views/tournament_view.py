@@ -191,7 +191,7 @@ class TournamentView:
                 f"\t{first_name} {last_name} ({serialized_player['sex']})"
                 f"\n\tNé le {serialized_player['date_of_birth']}"
                 f"\n\tClassement Elo : {ranking}"
-                f"\n\tPoints : {points}"
+                f"\n\tPoints : {points:.1f}"
             )
             players_info.append({
                 "first_name": first_name,
