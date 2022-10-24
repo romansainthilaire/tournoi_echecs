@@ -173,15 +173,11 @@ class TournamentView:
         Returns:
             The information (list of dictionary) of the tournament players.
         """
-        serialized_tournament = self.tournaments_table.get(
-            where("id") == tournament_id  # type: ignore
-        )
+        serialized_tournament = self.tournaments_table.get(where("id") == tournament_id)  # type: ignore
         player_ids = serialized_tournament["player_ids"]  # type: ignore
         serialized_players = []
         for player_id in player_ids:
-            serialized_player = self.players_table.get(
-                where("id") == player_id  # type: ignore
-            )
+            serialized_player = self.players_table.get(where("id") == player_id)  # type: ignore
             serialized_players.append(serialized_player)
         player_points = serialized_tournament["player_points"]  # type: ignore
         players_info = []
