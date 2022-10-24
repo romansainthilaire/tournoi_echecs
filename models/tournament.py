@@ -47,7 +47,7 @@ class Tournament():
         """String representation of a tournament."""
         return (
             f"\nID {self.id}"
-            f"\n\t{self.name}"
+            f"\t{self.name}"
             f"\n\tDescription : {self.description}"
             f"\n\tLieu : {self.location}"
             f"\n\tContrôle de temps : {self.time_control}"
