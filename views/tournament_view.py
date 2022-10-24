@@ -157,7 +157,7 @@ class TournamentView:
             if player_id not in [player['id'] for player in self.players_table.all()]:
                 print("\t\tCet ID ne correspond à aucun joueur.")
             elif player_id not in available_player_ids:
-                print("\t\tCet ID n'est pas disponible (joueur déjà pris sur un autre tournois).")
+                print("\t\tCet ID n'est pas disponible (joueur déjà pris sur un autre tournoi).")
             elif player_id in added_player_ids:
                 print("\t\tVous avez déjà ajouté ce joueur.")
             else:

@@ -7,13 +7,13 @@ class MainView():
         print("4.   Afficher tous les joueurs par classement Elo")
         print("5.   Créer un tournoi")
         print("6.   Afficher tous les tournois")
-        print("7.   Afficher les joueurs d'un tournois par ordre alphabétique")
-        print("8.   Afficher les joueurs d'un tournois par classement Elo")
-        print("9.   Afficher les joueurs d'un tournois par points")
+        print("7.   Afficher les joueurs d'un tournoi par ordre alphabétique")
+        print("8.   Afficher les joueurs d'un tournoi par classement Elo")
+        print("9.   Afficher les joueurs d'un tournoi par points")
         print("10.  Initialiser un round")
         print("11.  Rentrer les résultats d'un round")
-        print("12.  Afficher les rounds d'un tournois")
-        print("13.  Afficher les matchs d'un tournois")
+        print("12.  Afficher les rounds d'un tournoi")
+        print("13.  Afficher les matchs d'un tournoi")
         print("0.   Quitter")
 
     def get_action(self):
@@ -48,7 +48,7 @@ class MainView():
         print("\n\tTOUS LES JOUEURS\n\t→ Par classement Elo")
 
     def print_new_tournament_headline(self):
-        print("\n\tNOUVEAU TOURNOIS\n")
+        print("\n\tNOUVEAU TOURNOI\n")
 
     def print_all_tournaments_headline(self):
         print("\n\tTOUS LES TOURNOIS")
@@ -111,7 +111,7 @@ class MainView():
         print(f"\nOpération impossible : aucun round en cours sur le tournoi '{tournament_name}'.")
 
     def print_no_round_error(self, tournament_name: str):
-        print(f"\nOpération impossible : aucun round n'a été initialisé pour le tournois '{tournament_name}'.")
+        print(f"\nOpération impossible : aucun round n'a été initialisé pour le tournoi '{tournament_name}'.")
 
     def print_tournament_finished_error(self, tournament_name: str):
         print(f"\nOpération impossible : le tournoi '{tournament_name}' est terminé.")
