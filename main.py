@@ -166,7 +166,7 @@ if __name__ == "__main__":
                         f"\n\tMatch {index + 1}"
                         match_controller.set_scores(match)
                     tournament.finish_round()
-                    if not round.in_progress:
+                    if tournament.rounds_completed == tournament.total_rounds:
                         print("\n\tLe tournoi est terminé.")
                         print("\n\tRésultats :")
                         tournament_controller.tournament_view.print_players_sorted_by_points(tournament.id)
